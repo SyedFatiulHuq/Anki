@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="synchronize_your_data_with_ankidroid">Synchronize your data with AnkiDroid</string>
+    <string name="add_deck_content_description">Add a new deck</string>
+</resources>
