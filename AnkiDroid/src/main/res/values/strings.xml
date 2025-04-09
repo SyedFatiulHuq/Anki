@@ -4,4 +4,6 @@
     <string name="add_deck_content_description">Add a new deck</string>
     <string name="collapse_field">Collapse %s field</string>
     <string name="expand_field">Expand %s field</string>
+    <string name="note_editor_pin_field">Pin %s field</string>
+    <string name="note_editor_unpin_field">Unpin %s field</string>
 </resources>

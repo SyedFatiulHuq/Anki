@@ -2043,11 +2043,25 @@ class NoteEditor :
         if (currentFields[index].sticky) {
             toggleStickyText.getOrPut(index) { "" }
         }
-        if (toggleStickyText[index] == null) {
+
+        val isSticky = toggleStickyText[index] != null
+
+        if (!isSticky) {
             toggleStickyButton.background.alpha = 64
+            // Set content description for unpinned state
+            toggleStickyButton.contentDescription = getString(
+                R.string.note_editor_pin_field,
+                currentFields[index].name ?: ""
+            )
         } else {
             toggleStickyButton.background.alpha = 255
+            // Set content description for pinned state
+            toggleStickyButton.contentDescription = getString(
+                R.string.note_editor_unpin_field,
+                currentFields[index].name ?: ""
+            )
         }
+
         toggleStickyButton.setOnClickListener {
             onToggleStickyText(
                 toggleStickyButton,
@@ -2060,14 +2074,23 @@ class NoteEditor :
         toggleStickyButton: ImageButton,
         index: Int,
     ) {
-        val text = editFields!![index].fieldText
+        // Existing toggle functionality
         if (toggleStickyText[index] == null) {
-            toggleStickyText[index] = text
+            toggleStickyText[index] = currentFieldStrings[index]
             toggleStickyButton.background.alpha = 255
-            Timber.d("Saved Text:: %s", toggleStickyText[index])
+            // Update content description for pinned state
+            toggleStickyButton.contentDescription = getString(
+                R.string.note_editor_unpin_field,
+                currentFields[index].name ?: ""
+            )
         } else {
-            toggleStickyText.remove(index)
+            toggleStickyText[index] = null
             toggleStickyButton.background.alpha = 64
+            // Update content description for unpinned state
+            toggleStickyButton.contentDescription = getString(
+                R.string.note_editor_pin_field,
+                currentFields[index].name ?: ""
+            )
         }
     }
 
