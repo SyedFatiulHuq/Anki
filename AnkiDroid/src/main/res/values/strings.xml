@@ -2,4 +2,6 @@
 <resources>
     <string name="synchronize_your_data_with_ankidroid">Synchronize your data with AnkiDroid</string>
     <string name="add_deck_content_description">Add a new deck</string>
+    <string name="collapse_field">Collapse %s field</string>
+    <string name="expand_field">Expand %s field</string>
 </resources>
