@@ -83,6 +83,7 @@ class FieldEditLine : FrameLayout {
             }
         }
         setExpanderBackgroundImage()
+        setExpanderContentDescription()
         expandButton.setOnClickListener { toggleExpansionState() }
         editText.init()
         label.setPaddingRelative(getDensityAdjustedValue(context, 3.4f).toInt(), 0, 0, 0)
@@ -93,14 +94,28 @@ class FieldEditLine : FrameLayout {
             when (expansionState) {
                 ExpansionState.EXPANDED -> {
                     collapseView(editText, enableAnimation)
+                    collapseView(editText, enableAnimation) {
+                        expandButton.contentDescription = context.getString(R.string.expand_section)
+                        expandButton.announceForAccessibility(context.getString(R.string.section_collapsed))
+                    }
                     ExpansionState.COLLAPSED
                 }
                 ExpansionState.COLLAPSED -> {
                     expandView(editText, enableAnimation)
+                    expandButton.contentDescription = context.getString(R.string.collapse_section)
+                    expandButton.announceForAccessibility(context.getString(R.string.section_expanded))
                     ExpansionState.EXPANDED
                 }
             }
+
         setExpanderBackgroundImage()
+    }
+
+    private fun setExpanderContentDescription() {
+        when (expansionState) {
+            ExpansionState.COLLAPSED -> expandButton.contentDescription = context.getString(R.string.expand_section)
+            ExpansionState.EXPANDED -> expandButton.contentDescription = context.getString(R.string.collapse_section)
+        }
     }
 
     private fun setExpanderBackgroundImage() {

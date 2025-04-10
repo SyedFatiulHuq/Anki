@@ -32,10 +32,12 @@ object AnimationUtil {
     fun collapseView(
         view: View,
         animationEnabled: Boolean,
+        onCollapsed: (() -> Unit)? = null,
     ) {
         view.animate().cancel()
         if (!animationEnabled) {
             view.visibility = View.GONE
+            onCollapsed?.invoke()
             return
         }
         val set = AnimationSet(true)
@@ -53,6 +55,7 @@ object AnimationUtil {
 
                 override fun onAnimationEnd(animation: Animation) {
                     view.visibility = View.GONE
+                    onCollapsed?.invoke()
                 }
 
                 override fun onAnimationRepeat(animation: Animation) {}

@@ -30,6 +30,12 @@
     <string name="CardEditorCards">Cards: %1$s</string>
     <string name="edit_occlusions">Edit Occlusions</string>
 
+
+    <string name="expand_section">Expand</string>
+    <string name="collapse_section">Collapse</string>
+    <string name="section_expanded">Section Expanded</string>
+    <string name="section_collapsed">Section Collapsed</string>
+
     <string name="tag_name">Tag name</string>
     <string name="add_new_filter_tags">Add/filter tags</string>
     <string name="add_tag" maxLength="28">Add tag</string>
