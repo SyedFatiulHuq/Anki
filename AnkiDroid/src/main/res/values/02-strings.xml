@@ -291,7 +291,8 @@
     </plurals>
 
     <!--  Note Editor Toggle Sticky  -->
-    <string name="note_editor_toggle_sticky">Make field %s sticky</string>
+    <string name="note_editor_toggle_sticky">Pin %s field</string>
+    <string name="note_editor_toggle_unsticky">Unpin %s field</string>
 
     <string name="scoped_storage_learn_more">Learn More</string>
 

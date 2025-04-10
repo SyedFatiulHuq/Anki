@@ -1803,7 +1803,7 @@ class NoteEditor :
                 if (addNote) {
                     // toggle sticky button
                     toggleStickyButton.setBackgroundResource(R.drawable.ic_baseline_push_pin_24)
-                    setToggleStickyButtonListener(toggleStickyButton, i)
+                    setToggleStickyButtonListener(toggleStickyButton, i, editLineView.name)
                 } else {
                     toggleStickyButton.setBackgroundResource(0)
                 }
@@ -2039,6 +2039,7 @@ class NoteEditor :
     private fun setToggleStickyButtonListener(
         toggleStickyButton: ImageButton,
         index: Int,
+        name: String?,
     ) {
         if (currentFields[index].sticky) {
             toggleStickyText.getOrPut(index) { "" }
@@ -2052,6 +2053,7 @@ class NoteEditor :
             onToggleStickyText(
                 toggleStickyButton,
                 index,
+                name,
             )
         }
     }
@@ -2059,14 +2061,19 @@ class NoteEditor :
     private fun onToggleStickyText(
         toggleStickyButton: ImageButton,
         index: Int,
+        name: String?,
     ) {
         val text = editFields!![index].fieldText
         if (toggleStickyText[index] == null) {
             toggleStickyText[index] = text
             toggleStickyButton.background.alpha = 255
+            toggleStickyButton.contentDescription =
+                getString(R.string.note_editor_toggle_unsticky, name)
             Timber.d("Saved Text:: %s", toggleStickyText[index])
         } else {
             toggleStickyText.remove(index)
+            toggleStickyButton.contentDescription =
+                getString(R.string.note_editor_toggle_sticky, name)
             toggleStickyButton.background.alpha = 64
         }
     }
