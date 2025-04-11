@@ -1814,7 +1814,7 @@ class NoteEditor :
             mediaButton.contentDescription =
                 getString(R.string.multimedia_editor_attach_mm_content, editLineView.name)
             toggleStickyButton.contentDescription =
-                getString(R.string.note_editor_toggle_sticky, editLineView.name)
+                getString(R.string.note_editor_pin_field, editLineView.name)
 
             editLineView.isVisible = i !in indicesToHide
             fieldsLayoutContainer!!.addView(editLineView)
