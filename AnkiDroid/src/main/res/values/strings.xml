@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="synchronize_your_data_with_ankidroid">Synchronize your data with AnkiDroid</string>
-    <string name="add_deck_content_description">Add a new deck</string>
     <string name="collapse_field">Collapse %s field</string>
     <string name="expand_field">Expand %s field</string>
     <string name="note_editor_pin_field">Pin %s field</string>
     <string name="note_editor_unpin_field">Unpin %s field</string>
+    <string name="deck_picker_fab_main_description">Open action menu</string>
+    <string name="deck_picker_fab_add_note_description">Add new note</string>
+    <string name="deck_picker_add_shared_button_description">Get shared decks</string>
+    <string name="deck_picker_create_deck_button_description">Create deck</string>
+    <string name="deck_picker_create_filtered_deck_button_description">Create filtered deck</string>
 </resources>

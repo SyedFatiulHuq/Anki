@@ -63,6 +63,7 @@ class DeckPickerFloatingActionMenu(
 
     private fun showFloatingActionMenu() {
         toggleListener?.onBeginToggle(isOpening = true)
+        fabMain.contentDescription = context.getString(R.string.deck_picker_fab_add_note_description)
         deckPicker.activeSnackBar?.dismiss()
         linearLayout.alpha = 0.5f
         studyOptionsFrame?.let { it.alpha = 0.5f }
@@ -145,6 +146,7 @@ class DeckPickerFloatingActionMenu(
      */
     fun closeFloatingActionMenu(applyRiseAndShrinkAnimation: Boolean) {
         toggleListener?.onBeginToggle(isOpening = false)
+        fabMain.contentDescription = context.getString(R.string.deck_picker_fab_main_description)
         if (applyRiseAndShrinkAnimation) {
             linearLayout.alpha = 1f
             studyOptionsFrame?.let { it.alpha = 1f }
@@ -363,6 +365,13 @@ class DeckPickerFloatingActionMenu(
         val addDeckLabel: TextView = view.findViewById(R.id.add_deck_label)
         val addFilteredDeckLabel: TextView = view.findViewById(R.id.add_filtered_deck_label)
         val addNote: TextView = view.findViewById(R.id.add_note_label)
+        fabMain.contentDescription = context.getString(R.string.deck_picker_fab_main_description)
+        addSharedButton.contentDescription = context.getString(R.string.deck_picker_add_shared_button_description)
+        addDeckButton.contentDescription = context.getString(R.string.deck_picker_create_deck_button_description)
+        addFilteredDeckButton.contentDescription = context.getString(R.string.deck_picker_create_filtered_deck_button_description)
+
+// Set initial content description for fabMain
+        fabMain.contentDescription = context.getString(R.string.deck_picker_fab_main_description)
         fabMain.setOnTouchListener(
             object : DoubleTapListener(context) {
                 override fun onDoubleTap(e: MotionEvent?) {
@@ -431,5 +440,13 @@ class DeckPickerFloatingActionMenu(
     fun interface FloatingActionBarToggleListener {
         /** Triggered when the drawer is starting to open/close */
         fun onBeginToggle(isOpening: Boolean)
+    }
+
+    private fun updateFabContentDescription() {
+        fabMain.contentDescription = if (isFABOpen) {
+            context.getString(R.string.deck_picker_fab_add_note_description)
+        } else {
+            context.getString(R.string.deck_picker_fab_main_description)
+        }
     }
 }

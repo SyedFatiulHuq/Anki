@@ -65,7 +65,7 @@ class SyncActionProvider(
     fun setTooltipText(value: CharSequence) {
         syncButton?.apply {
             setTooltipTextCompat(value)
-            contentDescription = "Synchronize your data with AnkiDroid"
+            contentDescription = value
         }
     }
 }
