@@ -66,6 +66,7 @@ class FieldEditLine : FrameLayout {
         mediaButton = findViewById(R.id.id_media_button)
         val constraintLayout: ConstraintLayout = findViewById(R.id.constraint_layout)
         expandButton = findViewById(R.id.id_expand_button)
+        expandButton.contentDescription = context.getString(R.string.collapse_field, "")
         // 7433 -
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             editText.id = View.generateViewId()
@@ -89,30 +90,34 @@ class FieldEditLine : FrameLayout {
     }
 
     private fun toggleExpansionState() {
-        expansionState =
-            when (expansionState) {
-                ExpansionState.EXPANDED -> {
-                    collapseView(editText, enableAnimation)
-                    ExpansionState.COLLAPSED
-                }
-                ExpansionState.COLLAPSED -> {
-                    expandView(editText, enableAnimation)
-                    ExpansionState.EXPANDED
-                }
+        val oldState = expansionState
+        expansionState = when (oldState) {
+            ExpansionState.EXPANDED -> {
+                collapseView(editText, enableAnimation)
+                ExpansionState.COLLAPSED
             }
+            ExpansionState.COLLAPSED -> {
+                expandView(editText, enableAnimation)
+                ExpansionState.EXPANDED
+            }
+        }
+
         setExpanderBackgroundImage()
+
+        // Explicitly announce state change to accessibility services
+        expandButton.post {
+            expandButton.announceForAccessibility(expandButton.contentDescription)
+        }
     }
 
     private fun setExpanderBackgroundImage() {
         when (expansionState) {
             ExpansionState.EXPANDED -> {
-                val fieldName = _name.orEmpty()
-                expandButton.contentDescription = context.getString(R.string.collapse_field, fieldName)
+                updateExpandButtonContentDescription()
                 expandButton.setBackgroundResource(R.drawable.ic_expand_less_black_24dp)
             }
             ExpansionState.COLLAPSED -> {
-                val fieldName = _name.orEmpty()
-                expandButton.contentDescription = context.getString(R.string.expand_field, fieldName)
+                updateExpandButtonContentDescription()
                 expandButton.setBackgroundResource(R.drawable.ic_expand_more_black_24dp_xml)
             }
         }
@@ -150,7 +155,18 @@ class FieldEditLine : FrameLayout {
             _name = name
             editText.contentDescription = name
             label.text = name
+            // Update expand button's content description when name changes
+            updateExpandButtonContentDescription()
         }
+
+    private fun updateExpandButtonContentDescription() {
+        val fieldName = _name.orEmpty()
+        if (expansionState == ExpansionState.EXPANDED) {
+            expandButton.contentDescription = context.getString(R.string.collapse_field, fieldName)
+        } else {
+            expandButton.contentDescription = context.getString(R.string.expand_field, fieldName)
+        }
+    }
 
     val lastViewInTabOrder: View
         get() = expandButton
