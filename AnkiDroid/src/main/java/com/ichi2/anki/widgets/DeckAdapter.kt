@@ -184,12 +184,16 @@ class DeckAdapter(
         // Set the card counts and their colors
         holder.deckNew.text = node.newCount.toString()
         holder.deckNew.setTextColor(if (node.newCount == 0) zeroCountColor else newCountColor)
+        holder.deckNew.contentDescription = "${node.newCount} new cards"
         holder.deckLearn.text = node.lrnCount.toString()
         holder.deckLearn.setTextColor(if (node.lrnCount == 0) zeroCountColor else learnCountColor)
+        holder.deckLearn.contentDescription = "${node.lrnCount} learning cards"
         holder.deckRev.text = node.revCount.toString()
         holder.deckRev.setTextColor(if (node.revCount == 0) zeroCountColor else reviewCountColor)
+        holder.deckRev.contentDescription = "${node.revCount} review cards"
 
         holder.deckLayout.setOnClickListener { onDeckSelected(node.did) }
+        holder.deckLayout.contentDescription = "Open deck ${node.lastDeckNameComponent}"
         holder.deckLayout.setOnContextAndLongClickListener {
             onDeckContextRequested(node.did)
             true
