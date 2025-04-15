@@ -961,6 +961,25 @@ open class Reviewer :
                 easeButton2!!.nextTime = labels[1]
                 easeButton3!!.nextTime = labels[2]
                 easeButton4!!.nextTime = labels[3]
+                // Format time labels to use full words instead of abbreviations
+                val readableLabels = labels.map { timeLabel ->
+                    timeLabel.replace("< 1m", "less than 1 minute")
+                        .replace("< 6m", "less than 6 minutes")
+                        .replace("< 10m", "less than 10 minutes")
+                        .replace("m", " minutes")
+                        .replace("h", " hours")
+                        .replace("d", " days")
+                }
+
+                // Add content descriptions with full time words
+                findViewById<View>(R.id.flashcard_layout_ease1).contentDescription =
+                    "Rate as Again: Will show this card again in ${readableLabels[0]}"
+                findViewById<View>(R.id.flashcard_layout_ease2).contentDescription =
+                    "Rate as Hard: Will show this card again in ${readableLabels[1]}"
+                findViewById<View>(R.id.flashcard_layout_ease3).contentDescription =
+                    "Rate as Good: Will show this card again in ${readableLabels[2]}"
+                findViewById<View>(R.id.flashcard_layout_ease4).contentDescription =
+                    "Rate as Easy: Will show this card again in ${readableLabels[3]}"
             }
         }
     }
