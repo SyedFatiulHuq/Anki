@@ -1057,8 +1057,17 @@ open class Reviewer :
             }
         }
         textBarNew.text = newCount
+        textBarNew.contentDescription = "${counts.new} new cards"
+
         textBarLearn.text = lrnCount
+        textBarLearn.contentDescription = "${counts.lrn} learning cards"
+
         textBarReview.text = revCount
+        textBarReview.contentDescription = if (prefHideDueCount) {
+            "Hidden number of review cards"
+        } else {
+            "${counts.rev} review cards"
+        }
     }
 
     override fun fillFlashcard() {
