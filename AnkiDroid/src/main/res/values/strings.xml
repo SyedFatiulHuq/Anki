@@ -10,4 +10,5 @@
     <string name="deck_picker_add_shared_button_description">Get shared decks</string>
     <string name="deck_picker_create_deck_button_description">Create deck</string>
     <string name="deck_picker_create_filtered_deck_button_description">Create filtered deck</string>
+    <string name="import_successful">Deck imported successfully</string>
 </resources>

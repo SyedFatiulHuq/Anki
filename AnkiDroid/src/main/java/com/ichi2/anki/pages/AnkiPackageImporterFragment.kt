@@ -21,6 +21,7 @@ import androidx.activity.OnBackPressedCallback
 import com.ichi2.anki.CollectionManager
 import com.ichi2.anki.R
 import com.ichi2.anki.hideShowButtonCss
+import com.ichi2.anki.showThemedToast
 
 class AnkiPackageImporterFragment : PageFragment() {
     override fun onCreateWebViewClient(savedInstanceState: Bundle?): PageWebViewClient {
@@ -67,6 +68,9 @@ class AnkiPackageImporterFragment : PageFragment() {
                     url.endsWith("latestProgress") && !isDone -> true
                     url.endsWith("importDone") -> {
                         isDone = true // import was done so disable any back callback changes after this call
+                        view?.context?.let {
+                            showThemedToast(it, R.string.import_successful, true)
+                        }
                         false
                     }
                     else -> false
