@@ -30,6 +30,7 @@ import android.os.Handler
 import android.os.Message
 import android.os.Parcelable
 import android.text.SpannableString
+import android.text.TextUtils
 import android.text.style.UnderlineSpan
 import android.view.KeyEvent
 import android.view.Menu
@@ -1037,9 +1038,9 @@ open class Reviewer :
                 Counts.Queue.REV -> revCount!!.setSpan(UnderlineSpan(), 0, revCount!!.length, 0)
             }
         }
-        textBarNew.text = newCount
-        textBarLearn.text = lrnCount
-        textBarReview.text = revCount
+        textBarNew.text = TextUtils.concat(newCount, " new cards")
+        textBarLearn.text = TextUtils.concat(lrnCount, " cards learned")
+        textBarReview.text = TextUtils.concat(revCount, " cards reviewed")
     }
 
     override fun fillFlashcard() {
