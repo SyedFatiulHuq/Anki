@@ -180,6 +180,7 @@ class DeckAdapter(
         // Set deck name and colour. Filtered decks have their own colour
         holder.deckName.text = node.lastDeckNameComponent
         holder.deckName.setTextColor(if (node.filtered) deckNameDynColor else deckNameDefaultColor)
+        holder.deckLayout.contentDescription = node.lastDeckNameComponent + ". Tap to start practicing."
 
         // Set the card counts and their colors
         holder.deckNew.text = node.newCount.toString()
