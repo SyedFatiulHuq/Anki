@@ -50,6 +50,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultCallback
@@ -180,9 +181,11 @@ import com.ichi2.utils.positiveButton
 import com.ichi2.utils.show
 import com.ichi2.utils.title
 import com.ichi2.widget.WidgetStatus
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import timber.log.Timber
 import java.io.File
@@ -1240,6 +1243,10 @@ class NoteEditor :
                 }
                 addNoteErrorMessage = null
                 saveNoteWithProgress()
+                // Add toast message here for new note
+                withContext(Dispatchers.Main) {
+                    showThemedToast(requireContext(), "Card saved successfully", true)
+                }
             }
         } else {
             // Check whether note type has been changed
@@ -1309,6 +1316,10 @@ class NoteEditor :
                 requireActivity().withProgress {
                     undoableOp {
                         updateNote(currentEditedCard!!.note(this@undoableOp))
+                    }
+                    // Add toast message here for edited note (after update completes)
+                    activity?.runOnUiThread {
+                        showThemedToast(requireContext(), "Card updated successfully", true)
                     }
                 }
             }
