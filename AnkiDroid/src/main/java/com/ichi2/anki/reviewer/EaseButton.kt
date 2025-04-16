@@ -78,6 +78,34 @@ class EaseButton(
         layout.setOnTouchListener { view: View, event: MotionEvent -> easeHandler.onTouch(view, event) }
     }
 
+    fun setContentDescs() {
+        layout.contentDescription = "Difficulty: ${easeTextView.text}, repeat in " + getBetterTime(easeTimeView.text.toString())
+    }
+
+    private fun getBetterTime(input: String): String {
+        if (input.isEmpty()) return input
+
+        val unitChar = input.last().lowercaseChar()
+        val unitMap =
+            mapOf(
+                's' to "second",
+                'm' to "minute",
+                'h' to "hour",
+                'd' to "day",
+            )
+
+        val unit = unitMap[unitChar] ?: return input // if not a valid unit, return as-is
+
+        // Extract number from the string
+        val numberMatch = Regex("""\d+""").find(input) ?: return input
+        val number = numberMatch.value.toInt()
+
+        val fullUnit = unit + if (number != 1) "s" else ""
+
+        // Replace last character with fullUnit
+        return input.dropLast(1) + fullUnit
+    }
+
     fun detachFromParent() {
         if (layout.parent != null) {
             (layout.parent as ViewGroup).removeView(layout)

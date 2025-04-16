@@ -962,6 +962,11 @@ open class Reviewer :
                 easeButton2!!.nextTime = labels[1]
                 easeButton3!!.nextTime = labels[2]
                 easeButton4!!.nextTime = labels[3]
+
+                easeButton1!!.setContentDescs()
+                easeButton2!!.setContentDescs()
+                easeButton3!!.setContentDescs()
+                easeButton4!!.setContentDescs()
             }
         }
     }
