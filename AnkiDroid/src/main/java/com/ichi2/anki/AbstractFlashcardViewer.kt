@@ -912,7 +912,44 @@ abstract class AbstractFlashcardViewer :
         flipCardLayout = findViewById(R.id.flashcard_layout_flip)
         flipCardLayout?.let { layout ->
             if (minimalClickSpeed == 0) {
-                layout.setOnClickListener(flipCardListener)
+                layout.setOnClickListener { v: View ->
+                    // Execute original flip functionality first
+                    flipCardListener.onClick(v)
+
+                    // After a short delay to allow the card to flip
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        // Get the question text - this should be consistent
+                        val questionText = currentCard?.let { card ->
+                            Utils.stripHTML(card.question(getColUnsafe))
+                        } ?: "No question available"
+
+                        // Create the appropriate announcement
+                        val contentDesc = if (isDisplayingAnswer) {
+                            // Extract just the answer part by removing the question part
+                            val fullContent = currentCard?.let { card ->
+                                Utils.stripHTML(card.answer(getColUnsafe))
+                            } ?: "No answer available"
+
+                            // Remove the question text from the full content to get just the answer
+                            val answerTextOnly = fullContent.replace(questionText, "").trim()
+
+                            // Format with clear separation
+                            "Question: $questionText. Answer: $answerTextOnly"
+                        } else {
+                            "Question: $questionText"
+                        }
+
+                        // Update the webView content description
+                        webView?.contentDescription = contentDesc
+
+                        // Move focus to the webView that displays the card content
+                        webView?.requestFocus()
+
+                        // Announce for accessibility
+                        webView?.announceForAccessibility(contentDesc)
+                    }, 300) // Small delay to allow card flip animation
+                }
+
             } else {
                 val handler = Handler(Looper.getMainLooper())
                 layout.setOnTouchListener { _, event ->
@@ -920,6 +957,38 @@ abstract class AbstractFlashcardViewer :
                         MotionEvent.ACTION_DOWN -> {
                             handler.postDelayed({
                                 flipCardListener.onClick(layout)
+                                // After a short delay to allow the card to flip
+                                Handler(Looper.getMainLooper()).postDelayed({
+                                    // Get the question text - this should be consistent
+                                    val questionText = currentCard?.let { card ->
+                                        Utils.stripHTML(card.question(getColUnsafe))
+                                    } ?: "No question available"
+
+                                    // Create the appropriate announcement
+                                    val contentDesc = if (isDisplayingAnswer) {
+                                        // Extract just the answer part by removing the question part
+                                        val fullContent = currentCard?.let { card ->
+                                            Utils.stripHTML(card.answer(getColUnsafe))
+                                        } ?: "No answer available"
+
+                                        // Remove the question text from the full content to get just the answer
+                                        val answerTextOnly = fullContent.replace(questionText, "").trim()
+
+                                        // Format with clear separation
+                                        "Question: $questionText. Answer: $answerTextOnly"
+                                    } else {
+                                        "Question: $questionText"
+                                    }
+
+                                    // Update the webView content description
+                                    webView?.contentDescription = contentDesc
+
+                                    // Move focus to the webView that displays the card content
+                                    webView?.requestFocus()
+
+                                    // Announce for accessibility
+                                    webView?.announceForAccessibility(contentDesc)
+                                }, 300) // Small delay to allow card flip animation
                             }, minimalClickSpeed.toLong())
                             false
                         }

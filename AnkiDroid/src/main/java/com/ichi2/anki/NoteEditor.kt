@@ -527,7 +527,6 @@ class NoteEditor :
         @Suppress("deprecation", "API35 properly handle edge-to-edge")
         requireActivity().window.statusBarColor = Themes.getColorFromAttr(requireContext(), R.attr.appBarColor)
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         // Set up toolbar
         toolbar = view.findViewById(R.id.editor_toolbar)
         toolbar.apply {
@@ -1749,21 +1748,6 @@ class NoteEditor :
         }
 
         editFields = LinkedList()
-
-        for (editField in editFields!!) {
-            // Prevent the field from taking focus
-            editField.isFocusable = false
-            editField.isFocusableInTouchMode = false
-        }
-
-// Then make them focusable again when tapped
-        for (editField in editFields!!) {
-            editField.setOnClickListener {
-                editField.isFocusable = true
-                editField.isFocusableInTouchMode = true
-                editField.requestFocus()
-            }
-        }
 
         var previous: FieldEditLine? = null
         customViewIds.ensureCapacity(editLines.size)
