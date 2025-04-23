@@ -847,7 +847,7 @@ class NoteEditor :
             if (!getTextFromSearchView.isNullOrEmpty()) {
                 editFields!!.first().setText(getTextFromSearchView)
             }
-            editFields!!.first().requestFocus()
+//            editFields!!.first().requestFocus()
         }
 
         if (caller == NoteEditorCaller.IMG_OCCLUSION) {

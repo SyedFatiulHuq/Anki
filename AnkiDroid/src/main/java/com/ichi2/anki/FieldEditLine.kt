@@ -156,6 +156,7 @@ class FieldEditLine : FrameLayout {
         set(name) {
             _name = name
             editText.contentDescription = name
+            editText.hint = name
             label.text = name
         }
 
