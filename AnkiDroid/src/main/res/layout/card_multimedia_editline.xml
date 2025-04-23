@@ -20,7 +20,6 @@
 
     <ImageButton
         android:id="@+id/id_toggle_sticky_button"
-        android:nextFocusForward="@id/id_media_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="end|center_vertical"
@@ -32,7 +31,6 @@
 
     <ImageButton
         android:id="@+id/id_media_button"
-        android:nextFocusForward="@id/id_expand_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="end|center_vertical"
@@ -43,7 +41,6 @@
 
     <ImageButton
         android:id="@+id/id_expand_button"
-        android:nextFocusForward="@id/id_note_editText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="end|center_vertical"

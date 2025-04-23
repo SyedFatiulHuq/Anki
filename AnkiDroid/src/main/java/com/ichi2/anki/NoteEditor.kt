@@ -42,6 +42,7 @@ import android.view.View
 import android.view.View.OnFocusChangeListener
 import android.view.ViewGroup.MarginLayoutParams
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Button
@@ -526,6 +527,7 @@ class NoteEditor :
         @Suppress("deprecation", "API35 properly handle edge-to-edge")
         requireActivity().window.statusBarColor = Themes.getColorFromAttr(requireContext(), R.attr.appBarColor)
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         // Set up toolbar
         toolbar = view.findViewById(R.id.editor_toolbar)
         toolbar.apply {
@@ -844,13 +846,19 @@ class NoteEditor :
             requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         }
 
-        // set focus to FieldEditText 'first' on startup like Anki desktop
         if (editFields != null && !editFields!!.isEmpty()) {
             // EXTRA_TEXT_FROM_SEARCH_VIEW takes priority over other intent inputs
             if (!getTextFromSearchView.isNullOrEmpty()) {
                 editFields!!.first().setText(getTextFromSearchView)
             }
-            editFields!!.first().requestFocus()
+            // Remove automatic focus request or make it conditional
+            // editFields!!.first().requestFocus() - REMOVED
+
+            // Optional: Explicitly clear focus from the field
+            editFields!!.first().clearFocus()
+
+            // Optional: Set focus to the parent container instead
+            fieldsLayoutContainer?.requestFocus()
         }
 
         if (caller == NoteEditorCaller.IMG_OCCLUSION) {
@@ -1741,6 +1749,21 @@ class NoteEditor :
         }
 
         editFields = LinkedList()
+
+        for (editField in editFields!!) {
+            // Prevent the field from taking focus
+            editField.isFocusable = false
+            editField.isFocusableInTouchMode = false
+        }
+
+// Then make them focusable again when tapped
+        for (editField in editFields!!) {
+            editField.setOnClickListener {
+                editField.isFocusable = true
+                editField.isFocusableInTouchMode = true
+                editField.requestFocus()
+            }
+        }
 
         var previous: FieldEditLine? = null
         customViewIds.ensureCapacity(editLines.size)
@@ -2969,5 +2992,17 @@ class NoteEditor :
             !AnkiDroidApp.instance
                 .sharedPrefs()
                 .getBoolean(PREF_NOTE_EDITOR_SHOW_TOOLBAR, true)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Always hide keyboard on resume, regardless of focus
+        requireActivity().window.setSoftInputMode(
+            WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        )
+        // Clear focus from all EditText fields
+        editFields?.forEach { it.clearFocus() }
+        // Set focus to something else
+        mainToolbar.requestFocus()
     }
 }

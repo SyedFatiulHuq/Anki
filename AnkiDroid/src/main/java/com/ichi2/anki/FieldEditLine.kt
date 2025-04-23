@@ -34,6 +34,9 @@ import androidx.annotation.DrawableRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.os.ParcelCompat
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.ichi2.anki.common.utils.annotation.KotlinCleanup
 import com.ichi2.ui.AnimationUtil.collapseView
@@ -285,5 +288,43 @@ class FieldEditLine : FrameLayout {
     enum class ExpansionState {
         EXPANDED,
         COLLAPSED,
+    }
+
+    // Add this method to your FieldEditLine class
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+
+        // Force the focus order programmatically
+        ViewCompat.setAccessibilityDelegate(editText, object : AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.setTraversalAfter(null) // Clear any existing after
+                info.setTraversalBefore(null) // Clear any existing before
+            }
+        })
+
+        ViewCompat.setAccessibilityDelegate(toggleSticky, object : AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.setTraversalAfter(editText) // This comes after editText
+                info.setTraversalBefore(null) // Clear any existing before
+            }
+        })
+
+        ViewCompat.setAccessibilityDelegate(mediaButton, object : AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.setTraversalAfter(toggleSticky) // This comes after toggleSticky
+                info.setTraversalBefore(null) // Clear any existing before
+            }
+        })
+
+        ViewCompat.setAccessibilityDelegate(expandButton, object : AccessibilityDelegateCompat() {
+            override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+                super.onInitializeAccessibilityNodeInfo(host, info)
+                info.setTraversalAfter(mediaButton) // This comes after mediaButton
+                info.setTraversalBefore(null) // Clear any existing before
+            }
+        })
     }
 }
