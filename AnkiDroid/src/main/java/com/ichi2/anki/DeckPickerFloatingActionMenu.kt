@@ -19,13 +19,11 @@ import android.animation.Animator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.provider.Settings
-import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.ichi2.anki.ui.DoubleTapListener
 import timber.log.Timber
 
 class DeckPickerFloatingActionMenu(
@@ -363,23 +361,31 @@ class DeckPickerFloatingActionMenu(
         val addDeckLabel: TextView = view.findViewById(R.id.add_deck_label)
         val addFilteredDeckLabel: TextView = view.findViewById(R.id.add_filtered_deck_label)
         val addNote: TextView = view.findViewById(R.id.add_note_label)
-        fabMain.setOnTouchListener(
-            object : DoubleTapListener(context) {
-                override fun onDoubleTap(e: MotionEvent?) {
-                    addNote()
-                }
+//        fabMain.setOnTouchListener(
+//            object : DoubleTapListener(context) {
+//                override fun onDoubleTap(e: MotionEvent?) {
+//                    addNote()
+//                }
+//
+//                override fun onConfirmedSingleTap(e: MotionEvent?) {
+//                    // we use an unconfirmed tap as we don't want any visual delay in tapping the +
+//                    // and opening the menu.
+//                    if (!isFABOpen) {
+//                        showFloatingActionMenu()
+//                    } else {
+//                        addNote()
+//                    }
+//                }
+//            },
+//        )
+        fabMain.setOnClickListener {
+            if (!isFABOpen) {
+                showFloatingActionMenu()
+            } else {
+                addNote()
+            }
+        }
 
-                override fun onUnconfirmedSingleTap(e: MotionEvent?) {
-                    // we use an unconfirmed tap as we don't want any visual delay in tapping the +
-                    // and opening the menu.
-                    if (!isFABOpen) {
-                        showFloatingActionMenu()
-                    } else {
-                        addNote()
-                    }
-                }
-            },
-        )
         fabBGLayout.setOnClickListener { closeFloatingActionMenu(applyRiseAndShrinkAnimation = true) }
         val addDeckListener =
             View.OnClickListener {
