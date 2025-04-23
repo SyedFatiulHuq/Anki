@@ -535,6 +535,8 @@ abstract class AbstractFlashcardViewer :
         // set the correct mark/unmark icon on action bar
         refreshActionBar()
         focusDefaultLayout()
+        // Add announcement for new card
+        announceNewCard()
     }
 
     private fun focusDefaultLayout() {
@@ -2799,5 +2801,22 @@ abstract class AbstractFlashcardViewer :
             }
             return ""
         }
+    }
+
+    private fun announceNewCard() {
+        // Get the question text
+        val questionText = currentCard?.let { card ->
+            Utils.stripHTML(card.question(getColUnsafe))
+        } ?: "No question available"
+
+        // Announce new card
+        val announcement = "New card. Question: $questionText"
+
+        // Move focus to the webView that displays the card content
+        webView?.contentDescription = announcement
+        webView?.requestFocus()
+
+        // Announce for accessibility
+        webView?.announceForAccessibility(announcement)
     }
 }
