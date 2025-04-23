@@ -4,6 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+    <TextView
+        android:id="@+id/fab_live_region"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:layout_margin="0dp"
+        android:padding="0dp"
+        android:background="@android:color/transparent"
+        android:importantForAccessibility="yes"
+        android:accessibilityLiveRegion="polite"
+        android:textColor="@android:color/transparent"
+        android:visibility="visible"/>
 
     <View
         android:id="@+id/fabBGLayout"

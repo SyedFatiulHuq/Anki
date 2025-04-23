@@ -30,7 +30,7 @@ import timber.log.Timber
 
 class DeckPickerFloatingActionMenu(
     private val context: Context,
-    view: View,
+    private val view: View,
     private val deckPicker: DeckPicker,
 ) {
     private val fabMain: FloatingActionButton = view.findViewById(R.id.fab_main)
@@ -42,6 +42,8 @@ class DeckPickerFloatingActionMenu(
         view.findViewById(R.id.deckpicker_view) // Layout deck_picker.xml is attached here
     private val studyOptionsFrame: View? = view.findViewById(R.id.studyoptions_fragment)
     private val addNoteLabel: TextView = view.findViewById(R.id.add_note_label)
+
+    private val fabLiveRegion: TextView = view.findViewById(R.id.fab_live_region)
 
     // Colors values obtained from attributes
     private val fabNormalColor = MaterialColors.getColor(fabMain, R.attr.fab_normal)
@@ -68,6 +70,32 @@ class DeckPickerFloatingActionMenu(
         linearLayout.alpha = 0.5f
         studyOptionsFrame?.let { it.alpha = 0.5f }
         isFABOpen = true
+        // Announce to screen readers that the menu is open
+        fabLiveRegion.text = context.getString(R.string.deck_picker_fab_menu_opened)
+
+        // Set traversal order for accessibility (just for the buttons, not the labels)
+        val addDeckButton: FloatingActionButton = view.findViewById(R.id.add_deck_action)
+        val addFilteredDeckButton: FloatingActionButton = view.findViewById(R.id.add_filtered_deck_action)
+        val addSharedButton: FloatingActionButton = view.findViewById(R.id.add_shared_action)
+
+        // Make the labels non-focusable for accessibility
+        val addDeckLabel: TextView = view.findViewById(R.id.add_deck_label)
+        val addFilteredDeckLabel: TextView = view.findViewById(R.id.add_filtered_deck_label)
+        val addSharedLabel: TextView = view.findViewById(R.id.add_shared_label)
+        val addNoteLabel: TextView = view.findViewById(R.id.add_note_label)
+
+        // Make text labels non-focusable for accessibility
+        addDeckLabel.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        addFilteredDeckLabel.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        addSharedLabel.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        addNoteLabel.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+
+        // Set the traversal order for the buttons only
+        addDeckButton.accessibilityTraversalAfter = fabMain.id
+        addFilteredDeckButton.accessibilityTraversalAfter = addDeckButton.id
+        addSharedButton.accessibilityTraversalAfter = addFilteredDeckButton.id
+
+
         if (deckPicker.animationEnabled()) {
             // Show with animation
             addSharedLayout.visibility = View.VISIBLE
@@ -147,6 +175,8 @@ class DeckPickerFloatingActionMenu(
     fun closeFloatingActionMenu(applyRiseAndShrinkAnimation: Boolean) {
         toggleListener?.onBeginToggle(isOpening = false)
         fabMain.contentDescription = context.getString(R.string.deck_picker_fab_main_description)
+        // Announce to screen readers that the menu is closed
+        fabLiveRegion.text = context.getString(R.string.deck_picker_fab_menu_closed)
         if (applyRiseAndShrinkAnimation) {
             linearLayout.alpha = 1f
             studyOptionsFrame?.let { it.alpha = 1f }

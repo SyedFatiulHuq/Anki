@@ -11,4 +11,6 @@
     <string name="deck_picker_create_deck_button_description">Create deck</string>
     <string name="deck_picker_create_filtered_deck_button_description">Create filtered deck</string>
     <string name="import_successful">Deck imported successfully</string>
+    <string name="deck_picker_fab_menu_opened">Menu opened</string>
+    <string name="deck_picker_fab_menu_closed">Menu closed</string>
 </resources>
