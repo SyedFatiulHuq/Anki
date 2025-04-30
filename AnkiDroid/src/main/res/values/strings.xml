@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="open_add_menu">Open add menu</string>
+    <string name="create_new_card">Create new card</string>
+    <string name="close_menu">Close menu</string>
+    <string name="deck_picker_fab_menu_opened">Menu opened</string>
+    <string name="deck_picker_fab_menu_closed">Menu closed</string>
+    <string name="practice_deck">Practice deck: %1$s</string>
+
+</resources>

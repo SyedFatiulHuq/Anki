@@ -1087,13 +1087,13 @@ open class DeckPicker :
         val provider =
             MenuItemCompat.getActionProvider(menuItem) as? SyncActionProvider
                 ?: return
-        val tooltipText =
+        val buttonText =
             when (state.syncIcon) {
                 SyncIconState.Normal, SyncIconState.PendingChanges -> R.string.button_sync
                 SyncIconState.OneWay -> R.string.sync_menu_title_one_way_sync
                 SyncIconState.NotLoggedIn -> R.string.sync_menu_title_no_account
             }
-        provider.setTooltipText(getString(tooltipText))
+        provider.setButtonText(getString(buttonText))
         when (state.syncIcon) {
             SyncIconState.Normal -> {
                 BadgeDrawableBuilder.removeBadge(provider)

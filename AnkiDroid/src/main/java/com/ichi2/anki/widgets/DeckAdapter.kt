@@ -53,7 +53,7 @@ import timber.log.Timber
  */
 @RustCleanup("Differs from legacy backend: Create deck 'One', create deck 'One::two'. 'One::two' was not expanded")
 class DeckAdapter(
-    context: Context,
+    private val context: Context,
     private val activityHasBackground: Boolean,
     private val onDeckSelected: (DeckId) -> Unit,
     private val onDeckCountsSelected: (DeckId) -> Unit,
@@ -180,6 +180,8 @@ class DeckAdapter(
         // Set deck name and colour. Filtered decks have their own colour
         holder.deckName.text = node.lastDeckNameComponent
         holder.deckName.setTextColor(if (node.filtered) deckNameDynColor else deckNameDefaultColor)
+        holder.deckLayout.contentDescription =
+            context.getString(R.string.practice_deck, node.lastDeckNameComponent)
 
         // Set the card counts and their colors
         holder.deckNew.text = node.newCount.toString()

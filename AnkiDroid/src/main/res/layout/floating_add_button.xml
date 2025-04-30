@@ -3,8 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-
+    xmlns:tools="http://schemas.android.com/tools">
     <View
         android:id="@+id/fabBGLayout"
         android:layout_width="match_parent"
@@ -12,6 +11,14 @@
         android:background="@color/transparent"
         android:visibility="gone"
         />
+    <TextView
+        android:id="@+id/fab_live_region"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:accessibilityLiveRegion="polite"
+        android:importantForAccessibility="yes"
+        android:focusable="false"/>
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,6 +56,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_height="wrap_content"
                     android:text="@string/menu_get_shared_decks"
+                    android:importantForAccessibility="no"
                     />
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/add_shared_action"
@@ -58,6 +66,7 @@
                     android:layout_margin="10dp"
                     app:backgroundTint="?attr/fab_normal"
                     android:src="@drawable/ic_file_download_white"
+                    android:contentDescription="@string/menu_get_shared_decks"
                     />
             </LinearLayout>
 
@@ -85,6 +94,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_height="wrap_content"
                     android:text="@string/new_dynamic_deck"
+                    android:importantForAccessibility="no"
                     />
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/add_filtered_deck_action"
@@ -94,6 +104,7 @@
                     android:layout_margin="10dp"
                     app:backgroundTint="?attr/fab_normal"
                     android:src="@drawable/ic_add_filtered_deck"
+                    android:contentDescription="@string/new_dynamic_deck"
                     />
             </LinearLayout>
 
@@ -121,6 +132,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_height="wrap_content"
                     android:text="@string/new_deck"
+                    android:importantForAccessibility="no"
                     />
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/add_deck_action"
@@ -130,6 +142,7 @@
                     android:layout_margin="10dp"
                     app:backgroundTint="?attr/fab_normal"
                     android:src="@drawable/ic_add_deck_filled"
+                    android:contentDescription="@string/new_deck"
                     />
             </LinearLayout>
 
@@ -154,6 +167,7 @@
                     android:text="@string/menu_add"
                     android:visibility="gone"
                     android:translationX="180px"
+                    android:importantForAccessibility="no"
                     />
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/fab_main"
@@ -166,6 +180,7 @@
                     app:srcCompat="@drawable/ic_add_white"
                     app:backgroundTint="?attr/fab_normal"
                     app:fabSize="normal"
+                    android:contentDescription="@string/open_add_menu"
                     />
             </LinearLayout>
 

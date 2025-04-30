@@ -19,13 +19,15 @@ import android.animation.Animator
 import android.content.Context
 import android.content.res.ColorStateList
 import android.provider.Settings
-import android.view.MotionEvent
 import android.view.View
+import android.view.accessibility.AccessibilityEvent
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.ichi2.anki.ui.DoubleTapListener
 import timber.log.Timber
 
 class DeckPickerFloatingActionMenu(
@@ -42,6 +44,12 @@ class DeckPickerFloatingActionMenu(
         view.findViewById(R.id.deckpicker_view) // Layout deck_picker.xml is attached here
     private val studyOptionsFrame: View? = view.findViewById(R.id.studyoptions_fragment)
     private val addNoteLabel: TextView = view.findViewById(R.id.add_note_label)
+
+    val addDeckButton: FloatingActionButton = view.findViewById(R.id.add_deck_action)
+    val addFilteredDeckButton: FloatingActionButton = view.findViewById(R.id.add_filtered_deck_action)
+    val addSharedButton: FloatingActionButton = view.findViewById(R.id.add_shared_action)
+
+    private val fabLiveRegion: TextView = view.findViewById(R.id.fab_live_region)
 
     // Colors values obtained from attributes
     private val fabNormalColor = MaterialColors.getColor(fabMain, R.attr.fab_normal)
@@ -67,13 +75,15 @@ class DeckPickerFloatingActionMenu(
         linearLayout.alpha = 0.5f
         studyOptionsFrame?.let { it.alpha = 0.5f }
         isFABOpen = true
+        // Announce to screen readers that the menu is open
+        fabLiveRegion.text = context.getString(R.string.deck_picker_fab_menu_opened)
         if (deckPicker.animationEnabled()) {
             // Show with animation
             addSharedLayout.visibility = View.VISIBLE
             addDeckLayout.visibility = View.VISIBLE
             addFilteredDeckLayout.visibility = View.VISIBLE
-            fabBGLayout.visibility = View.VISIBLE
             addNoteLabel.visibility = View.VISIBLE
+            createAccessibleFabBGLayout()
             fabMain.animate().apply {
                 /**
                  * If system animations are true changes the FAB color otherwise it remains the same
@@ -114,7 +124,6 @@ class DeckPickerFloatingActionMenu(
             addSharedLayout.visibility = View.VISIBLE
             addDeckLayout.visibility = View.VISIBLE
             addFilteredDeckLayout.visibility = View.VISIBLE
-            fabBGLayout.visibility = View.VISIBLE
             addNoteLabel.visibility = View.VISIBLE
             addSharedLayout.alpha = 1f
             addDeckLayout.alpha = 1f
@@ -124,6 +133,7 @@ class DeckPickerFloatingActionMenu(
             addDeckLayout.translationY = 0f
             addFilteredDeckLayout.translationY = 0f
             addNoteLabel.translationX = 0f
+            createAccessibleFabBGLayout()
 
             // During without animation maintain the original color of FAB
             fabMain.apply {
@@ -131,6 +141,37 @@ class DeckPickerFloatingActionMenu(
                 setImageResource(addNoteIcon)
             }
         }
+
+        configureAddMenuAccessibility()
+    }
+
+    private fun configureAddMenuAccessibility() {
+        fabMain.contentDescription = context.getString(R.string.create_new_card)
+
+        fabBGLayout.requestFocus()
+        fabBGLayout.sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_FOCUSED)
+
+        // Set traversal order for accessibility
+        addDeckButton.accessibilityTraversalAfter = fabMain.id
+        addFilteredDeckButton.accessibilityTraversalAfter = addDeckButton.id
+        addSharedButton.accessibilityTraversalAfter = addFilteredDeckButton.id
+    }
+
+    private fun createAccessibleFabBGLayout() {
+        fabBGLayout.visibility = View.VISIBLE
+        ViewCompat.setAccessibilityDelegate(
+            fabBGLayout,
+            object : AccessibilityDelegateCompat() {
+                override fun onInitializeAccessibilityNodeInfo(
+                    host: View,
+                    info: AccessibilityNodeInfoCompat,
+                ) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    info.roleDescription = "button"
+                }
+            },
+        )
+        fabBGLayout.contentDescription = context.getString(R.string.close_menu)
     }
 
     /**
@@ -310,6 +351,9 @@ class DeckPickerFloatingActionMenu(
                 fabMain.setImageResource(addWhiteIcon)
             }
         }
+        fabMain.contentDescription = context.getString(R.string.open_add_menu)
+        // Announce to screen readers that the menu is closed
+        fabLiveRegion.text = context.getString(R.string.deck_picker_fab_menu_closed)
     }
 
     fun showFloatingActionButton() {
@@ -363,23 +407,30 @@ class DeckPickerFloatingActionMenu(
         val addDeckLabel: TextView = view.findViewById(R.id.add_deck_label)
         val addFilteredDeckLabel: TextView = view.findViewById(R.id.add_filtered_deck_label)
         val addNote: TextView = view.findViewById(R.id.add_note_label)
-        fabMain.setOnTouchListener(
-            object : DoubleTapListener(context) {
-                override fun onDoubleTap(e: MotionEvent?) {
-                    addNote()
-                }
-
-                override fun onUnconfirmedSingleTap(e: MotionEvent?) {
-                    // we use an unconfirmed tap as we don't want any visual delay in tapping the +
-                    // and opening the menu.
-                    if (!isFABOpen) {
-                        showFloatingActionMenu()
-                    } else {
-                        addNote()
-                    }
-                }
-            },
-        )
+//        fabMain.setOnTouchListener(
+//            object : DoubleTapListener(context) {
+//                override fun onDoubleTap(e: MotionEvent?) {
+//                    addNote()
+//                }
+//
+//                override fun onUnconfirmedSingleTap(e: MotionEvent?) {
+//                    // we use an unconfirmed tap as we don't want any visual delay in tapping the +
+//                    // and opening the menu.
+//                    if (!isFABOpen) {
+//                        showFloatingActionMenu()
+//                    } else {
+//                        addNote()
+//                    }
+//                }
+//            },
+//        )
+        fabMain.setOnClickListener {
+            if (!isFABOpen) {
+                showFloatingActionMenu()
+            } else {
+                addNote()
+            }
+        }
         fabBGLayout.setOnClickListener { closeFloatingActionMenu(applyRiseAndShrinkAnimation = true) }
         val addDeckListener =
             View.OnClickListener {
