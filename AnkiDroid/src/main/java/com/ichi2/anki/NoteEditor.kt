@@ -180,9 +180,11 @@ import com.ichi2.utils.positiveButton
 import com.ichi2.utils.show
 import com.ichi2.utils.title
 import com.ichi2.widget.WidgetStatus
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import timber.log.Timber
 import java.io.File
@@ -847,7 +849,7 @@ class NoteEditor :
             if (!getTextFromSearchView.isNullOrEmpty()) {
                 editFields!!.first().setText(getTextFromSearchView)
             }
-            editFields!!.first().requestFocus()
+//            editFields!!.first().requestFocus()
         }
 
         if (caller == NoteEditorCaller.IMG_OCCLUSION) {
@@ -1164,7 +1166,7 @@ class NoteEditor :
     // ----------------------------------------------------------------------------
 
     @KotlinCleanup("return early and simplify if possible")
-    private fun onNoteAdded() {
+    private suspend fun onNoteAdded() {
         var closeEditorAfterSave = false
         var closeIntent: Intent? = null
         changed = true
@@ -1179,6 +1181,10 @@ class NoteEditor :
             closeIntent = Intent().apply { putExtra(EXTRA_ID, requireArguments().getString(EXTRA_ID)) }
         } else if (!editFields!!.isEmpty()) {
             editFields!!.first().focusWithKeyboard()
+        }
+
+        withContext(Dispatchers.Main) {
+            showThemedToast(requireContext(), "Card added", true)
         }
 
         if (closeEditorAfterSave) {
@@ -1311,6 +1317,9 @@ class NoteEditor :
                         updateNote(currentEditedCard!!.note(this@undoableOp))
                     }
                 }
+            }
+            activity?.runOnUiThread {
+                showThemedToast(requireContext(), "Card updated", true)
             }
             closeNoteEditor()
             return
@@ -1803,7 +1812,7 @@ class NoteEditor :
                 if (addNote) {
                     // toggle sticky button
                     toggleStickyButton.setBackgroundResource(R.drawable.ic_baseline_push_pin_24)
-                    setToggleStickyButtonListener(toggleStickyButton, i)
+                    setToggleStickyButtonListener(toggleStickyButton, i, editLineView.name)
                 } else {
                     toggleStickyButton.setBackgroundResource(0)
                 }
@@ -2039,6 +2048,7 @@ class NoteEditor :
     private fun setToggleStickyButtonListener(
         toggleStickyButton: ImageButton,
         index: Int,
+        name: String?,
     ) {
         if (currentFields[index].sticky) {
             toggleStickyText.getOrPut(index) { "" }
@@ -2052,6 +2062,7 @@ class NoteEditor :
             onToggleStickyText(
                 toggleStickyButton,
                 index,
+                name,
             )
         }
     }
@@ -2059,14 +2070,19 @@ class NoteEditor :
     private fun onToggleStickyText(
         toggleStickyButton: ImageButton,
         index: Int,
+        name: String?,
     ) {
         val text = editFields!![index].fieldText
         if (toggleStickyText[index] == null) {
             toggleStickyText[index] = text
             toggleStickyButton.background.alpha = 255
+            toggleStickyButton.contentDescription =
+                getString(R.string.note_editor_toggle_unsticky, name)
             Timber.d("Saved Text:: %s", toggleStickyText[index])
         } else {
             toggleStickyText.remove(index)
+            toggleStickyButton.contentDescription =
+                getString(R.string.note_editor_toggle_sticky, name)
             toggleStickyButton.background.alpha = 64
         }
     }

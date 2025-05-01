@@ -7,4 +7,11 @@
     <string name="deck_picker_fab_menu_closed">Menu closed</string>
     <string name="practice_deck">Practice deck: %1$s</string>
 
+    <string name="collapse_field">Collapse %s field</string>
+    <string name="expand_field">Expand %s field</string>
+    <string name="field_expanded">%s field expanded</string>
+    <string name="field_collapsed">%s field collapsed</string>
+    <string name="note_editor_toggle_sticky">Pin %s field</string>
+    <string name="note_editor_toggle_unsticky">Unpin %s field</string>
+
 </resources>

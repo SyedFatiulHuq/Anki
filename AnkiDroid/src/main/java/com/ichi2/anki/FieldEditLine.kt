@@ -89,14 +89,20 @@ class FieldEditLine : FrameLayout {
     }
 
     private fun toggleExpansionState() {
+        val sectionName = _name.orEmpty()
         expansionState =
             when (expansionState) {
                 ExpansionState.EXPANDED -> {
-                    collapseView(editText, enableAnimation)
+                    collapseView(editText, enableAnimation) {
+                        expandButton.contentDescription = context.getString(R.string.expand_field, sectionName)
+                        expandButton.announceForAccessibility(context.getString(R.string.field_collapsed, sectionName))
+                    }
                     ExpansionState.COLLAPSED
                 }
                 ExpansionState.COLLAPSED -> {
                     expandView(editText, enableAnimation)
+                    expandButton.contentDescription = context.getString(R.string.collapse_field, sectionName)
+                    expandButton.announceForAccessibility(context.getString(R.string.field_expanded, sectionName))
                     ExpansionState.EXPANDED
                 }
             }
@@ -141,7 +147,13 @@ class FieldEditLine : FrameLayout {
         set(name) {
             _name = name
             editText.contentDescription = name
+            editText.hint = name
             label.text = name
+            label.contentDescription = "$name field"
+            when (expansionState) {
+                ExpansionState.COLLAPSED -> expandButton.contentDescription = context.getString(R.string.expand_field, name)
+                ExpansionState.EXPANDED -> expandButton.contentDescription = context.getString(R.string.collapse_field, name)
+            }
         }
 
     val lastViewInTabOrder: View
