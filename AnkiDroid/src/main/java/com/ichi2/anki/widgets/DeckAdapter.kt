@@ -27,6 +27,9 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.res.getDrawableOrThrow
 import androidx.core.content.withStyledAttributes
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -182,6 +185,18 @@ class DeckAdapter(
         holder.deckName.setTextColor(if (node.filtered) deckNameDynColor else deckNameDefaultColor)
         holder.deckLayout.contentDescription =
             context.getString(R.string.practice_deck, node.lastDeckNameComponent)
+        ViewCompat.setAccessibilityDelegate(
+            holder.deckLayout,
+            object : AccessibilityDelegateCompat() {
+                override fun onInitializeAccessibilityNodeInfo(
+                    host: View,
+                    info: AccessibilityNodeInfoCompat,
+                ) {
+                    super.onInitializeAccessibilityNodeInfo(host, info)
+                    info.roleDescription = "button"
+                }
+            },
+        )
 
         // Set the card counts and their colors
         holder.deckNew.text = node.newCount.toString()
