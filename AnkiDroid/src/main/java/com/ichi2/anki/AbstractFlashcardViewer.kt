@@ -912,7 +912,11 @@ abstract class AbstractFlashcardViewer :
         flipCardLayout = findViewById(R.id.flashcard_layout_flip)
         flipCardLayout?.let { layout ->
             if (minimalClickSpeed == 0) {
-                layout.setOnClickListener(flipCardListener)
+                layout.setOnClickListener { v: View ->
+                    // Execute original flip functionality first
+                    flipCardListener.onClick(v)
+                    announceAnswer()
+                }
             } else {
                 val handler = Handler(Looper.getMainLooper())
                 layout.setOnTouchListener { _, event ->
@@ -920,6 +924,7 @@ abstract class AbstractFlashcardViewer :
                         MotionEvent.ACTION_DOWN -> {
                             handler.postDelayed({
                                 flipCardListener.onClick(layout)
+//                                announceAnswer()
                             }, minimalClickSpeed.toLong())
                             false
                         }
@@ -1005,6 +1010,43 @@ abstract class AbstractFlashcardViewer :
         whiteboardContainer.layoutParams = whiteboardContainerParams
         cardFrame!!.layoutParams = flashcardContainerParams
         touchLayer!!.layoutParams = touchLayerContainerParams
+    }
+
+    private fun announceAnswer() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            // Get the question text - this should be consistent
+            val questionText =
+                currentCard?.let { card ->
+                    Utils.stripHTML(card.question(getColUnsafe))
+                } ?: "No question available"
+
+            // Create the appropriate announcement
+            val contentDesc =
+                if (isDisplayingAnswer) {
+                    // Extract just the answer part by removing the question part
+                    val fullContent =
+                        currentCard?.let { card ->
+                            Utils.stripHTML(card.answer(getColUnsafe))
+                        } ?: "No answer available"
+
+                    // Remove the question text from the full content to get just the answer
+                    val answerTextOnly = fullContent.replace(questionText, "").trim()
+
+                    // Format with clear separation
+                    "Answer: $answerTextOnly"
+                } else {
+                    "Question: $questionText"
+                }
+
+            // Update the webView content description
+            webView?.contentDescription = contentDesc
+
+            // Move focus to the webView that displays the card content
+            webView?.requestFocus()
+
+            // Announce for accessibility
+            webView?.announceForAccessibility(contentDesc)
+        }, 300)
     }
 
     protected open fun createWebView(): WebView {

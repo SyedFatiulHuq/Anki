@@ -952,6 +952,12 @@ open class Reviewer :
         easeButton4!!.setVisibility(View.VISIBLE)
         easeButton3!!.requestFocus()
 
+        // Set role as button for each ease button
+        easeButton1!!.setRole()
+        easeButton2!!.setRole()
+        easeButton3!!.setRole()
+        easeButton4!!.setRole()
+
         // Show next review time
         if (shouldShowNextReviewTime()) {
             val state = queueState!!
@@ -961,6 +967,12 @@ open class Reviewer :
                 easeButton2!!.nextTime = labels[1]
                 easeButton3!!.nextTime = labels[2]
                 easeButton4!!.nextTime = labels[3]
+
+                // Set custom content description to make it more clear to screen reader users
+                easeButton1!!.setContentDescs()
+                easeButton2!!.setContentDescs()
+                easeButton3!!.setContentDescs()
+                easeButton4!!.setContentDescs()
             }
         }
     }
@@ -1038,8 +1050,18 @@ open class Reviewer :
             }
         }
         textBarNew.text = newCount
+        textBarNew.contentDescription = "${counts.new} new cards"
+
         textBarLearn.text = lrnCount
+        textBarLearn.contentDescription = "${counts.lrn} learning cards"
+
         textBarReview.text = revCount
+        textBarReview.contentDescription =
+            if (prefHideDueCount) {
+                "Number of reviewed cards: hidden"
+            } else {
+                "${counts.rev} reviewed cards"
+            }
     }
 
     override fun fillFlashcard() {
