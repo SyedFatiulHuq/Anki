@@ -43,6 +43,7 @@ class RtlCompliantActionProvider(
     override fun onCreateActionView(forItem: MenuItem): View {
         val actionView = ImageButton(context, null, android.R.attr.actionButtonStyle)
         actionView.setTooltipTextCompat(forItem.title)
+        actionView.contentDescription = forItem.title
         forItem.icon?.let {
             it.isAutoMirrored = true
             actionView.setImageDrawable(it)

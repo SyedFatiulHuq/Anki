@@ -535,6 +535,20 @@ abstract class AbstractFlashcardViewer :
         // set the correct mark/unmark icon on action bar
         refreshActionBar()
         focusDefaultLayout()
+
+        announceNewCard()
+    }
+
+    private fun announceNewCard() {
+        // Get the question text
+        val questionText =
+            currentCard?.let { card ->
+                Utils.stripHTML(card.question(getColUnsafe))
+            } ?: "No question available"
+
+        // Announce question for accessibility
+        webView?.announceForAccessibility(questionText)
+        webView?.requestFocus()
     }
 
     private fun focusDefaultLayout() {
@@ -870,6 +884,7 @@ abstract class AbstractFlashcardViewer :
         cardFrameParent = cardFrame!!.parent as ViewGroup
         touchLayer =
             findViewById<FrameLayout>(R.id.touch_layer).apply { setOnTouchListener(gestureListener) }
+        touchLayer!!.importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         cardFrame!!.removeAllViews()
 
         // Initialize swipe
@@ -912,11 +927,7 @@ abstract class AbstractFlashcardViewer :
         flipCardLayout = findViewById(R.id.flashcard_layout_flip)
         flipCardLayout?.let { layout ->
             if (minimalClickSpeed == 0) {
-                layout.setOnClickListener { v: View ->
-                    // Execute original flip functionality first
-                    flipCardListener.onClick(v)
-                    announceAnswer()
-                }
+                layout.setOnClickListener(flipCardListener)
             } else {
                 val handler = Handler(Looper.getMainLooper())
                 layout.setOnTouchListener { _, event ->
@@ -924,7 +935,6 @@ abstract class AbstractFlashcardViewer :
                         MotionEvent.ACTION_DOWN -> {
                             handler.postDelayed({
                                 flipCardListener.onClick(layout)
-//                                announceAnswer()
                             }, minimalClickSpeed.toLong())
                             false
                         }
@@ -1013,40 +1023,33 @@ abstract class AbstractFlashcardViewer :
     }
 
     private fun announceAnswer() {
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Get the question text - this should be consistent
-            val questionText =
-                currentCard?.let { card ->
-                    Utils.stripHTML(card.question(getColUnsafe))
-                } ?: "No question available"
+        // Get the question text - this should be consistent
+        val questionText =
+            currentCard?.let { card ->
+                Utils.stripHTML(card.question(getColUnsafe))
+            } ?: "No question available"
 
-            // Create the appropriate announcement
-            val contentDesc =
-                if (isDisplayingAnswer) {
-                    // Extract just the answer part by removing the question part
-                    val fullContent =
-                        currentCard?.let { card ->
-                            Utils.stripHTML(card.answer(getColUnsafe))
-                        } ?: "No answer available"
+        // Create the appropriate announcement
+        val contentDesc =
+            if (isDisplayingAnswer) {
+                // Extract just the answer part by removing the question part
+                val fullContent =
+                    currentCard?.let { card ->
+                        Utils.stripHTML(card.answer(getColUnsafe))
+                    } ?: "No answer available"
 
-                    // Remove the question text from the full content to get just the answer
-                    val answerTextOnly = fullContent.replace(questionText, "").trim()
+                // Remove the question text from the full content to get just the answer
+                val answerTextOnly = fullContent.replace(questionText, "").trim()
 
-                    // Format with clear separation
-                    "Answer: $answerTextOnly"
-                } else {
-                    "Question: $questionText"
-                }
+                // Format with clear separation
+                "Answer: $answerTextOnly"
+            } else {
+                "Question: $questionText"
+            }
 
-            // Update the webView content description
-            webView?.contentDescription = contentDesc
-
-            // Move focus to the webView that displays the card content
-            webView?.requestFocus()
-
-            // Announce for accessibility
-            webView?.announceForAccessibility(contentDesc)
-        }, 300)
+        // Announce for accessibility
+        webView?.announceForAccessibility(contentDesc)
+        webView?.requestFocus()
     }
 
     protected open fun createWebView(): WebView {
@@ -1412,6 +1415,7 @@ abstract class AbstractFlashcardViewer :
         }
         updateCard(answerContent)
         displayAnswerBottomBar()
+        announceAnswer()
     }
 
     override fun scrollCurrentCardBy(dy: Int) {
